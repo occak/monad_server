@@ -80,6 +80,7 @@ void ofApp::update(){
                         _player->setLife(100);
                         _player->setDiscIndex(-1);
                         _player->setColorByIndex(players.size());
+                        _player->setNick(received[1]);
                     }
                     _player->setConnection(true);
                     
@@ -111,6 +112,7 @@ void ofApp::update(){
                     newPlayerInfo += "color: " + ofToString(_player->getColor()) + "//";
                     newPlayerInfo += "life: " + ofToString(_player->getLife()) + "//";
                     newPlayerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
+                    newPlayerInfo += "nick: " + _player->getNick() + "//";
                     for (int j = 0; j < server.getLastID(); j++) {
                         if(j != i) server.send(j, newPlayerInfo);
                     }

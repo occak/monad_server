@@ -91,6 +91,7 @@ void ofApp::update(){
                     playerInfo += "color: " + ofToString(_player->getColor()) + "//";
                     playerInfo += "life: " + ofToString(_player->getLife()) + "//";
                     playerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
+                    if(rejoin == true) playerInfo += "nick: " + _player->getNick() + "//";
                     server.send(i, playerInfo);
                     
                     if(players.size() > 1){ //if there are other players
@@ -101,6 +102,7 @@ void ofApp::update(){
                                 otherPlayers += "color: " + ofToString(players[j]->getColor()) + "//";
                                 otherPlayers += "life: " + ofToString(players[j]->getLife()) + "//";
                                 otherPlayers += "index: " + ofToString(players[j]->getDiscIndex()) + "//";
+                                otherPlayers += "nick: " + players[j]->getNick() + "//";
                                 server.send(i, otherPlayers);
                             }
                         }

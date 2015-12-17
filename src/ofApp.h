@@ -6,6 +6,7 @@
 #include "ofxNetwork.h"
 
 
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -32,6 +33,8 @@ class ofApp : public ofBaseApp{
     ofxTCPServer server;
     vector<string> received;
     string title;
+    
+    vector<vector<string> > eventList;
     
 private:
     

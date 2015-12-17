@@ -28,12 +28,13 @@ void ofApp::setup(){
 //    sound.setup(&disc);
     
     // set up game costs
-//    costRadius = 1;
-//    costDensity = 1;
-//    costTexture = 1;
-//    costRotation = 1;
-//    costMute = 5;
-//    costMove = 2;
+    costRadius = -1;
+    costDensity = -1;
+    costRotation = -1;
+    costTexture = -2;
+    costMute = -2;
+    costMove = -2;
+    reward = 4;
 }
 //--------------------------------------------------------------
 void ofApp::exit(){
@@ -83,6 +84,17 @@ void ofApp::update(){
                         _player->setNick(received[1]);
                     }
                     _player->setConnection(true);
+                    
+                    //send game costs
+                    string costs = "costs//";
+                    costs += "costRadius: " + ofToString(costRadius) + "//";
+                    costs += "costDensity: " + ofToString(costDensity) + "//";
+                    costs += "costRotation: " + ofToString(costRotation) + "//";
+                    costs += "costTexture: " + ofToString(costTexture) + "//";
+                    costs += "costMute: " + ofToString(costMute) + "//";
+                    costs += "costMove: " + ofToString(costMove) + "//";
+                    costs += "reward: " + ofToString(reward) + "//";
+                    server.send(i, costs);
                     
                     
                     string playerInfo; // send player status
@@ -381,7 +393,7 @@ void ofApp::update(){
                                 }
                             }
                         }
-                        if (playerData[0] == "life" && _player != NULL) _player->setLife(ofToFloat(playerData[1]));
+                        if (playerData[0] == "lifeChange" && _player != NULL) _player->changeLife(ofToFloat(playerData[1]));
                     }
                 }
                 
@@ -492,6 +504,33 @@ void ofApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
+    
+}
+
+//--------------------------------------------------------------
+
+void ofApp::eventMatch(string IP, string parameter, string change){
+    
+    for (int i = 0; i < eventList.size(); i++) {
+        
+        //check if other players recently changed the same parameter the same way
+        if(IP != eventList[i][1] && parameter == eventList[i][2] && change == eventList[i][2]){
+            
+            //reward imitating player
+            string lifeUpdate = "life//";
+            lifeUpdate += "IP: "+ IP + "//";
+            lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
+            server.sendToAll(lifeUpdate);
+            
+            //reward imitated player
+            lifeUpdate = "life//";
+            lifeUpdate += "IP: "+ eventList[i][1] + "//";
+            lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
+            server.sendToAll(lifeUpdate);
+            
+            
+        }
+    }
     
 }
 

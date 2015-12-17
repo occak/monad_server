@@ -25,9 +25,15 @@ class ofApp : public ofBaseApp{
     
     //ui
     void exit();
-    
+  
     //game
-    float costRadius, costTexture, costDensity, costRotation, costMute, costMove;
+    float   costRadius,
+    costTexture,
+    costDensity,
+    costRotation,
+    costMute,
+    costMove,
+    reward;
     
     //TCP
     ofxTCPServer server;
@@ -37,6 +43,8 @@ class ofApp : public ofBaseApp{
     vector<vector<string> > eventList;
     
 private:
+    
+    void eventMatch(string IP, string parameter, string change);
     
     bool fullScreen;
     int playerNum;

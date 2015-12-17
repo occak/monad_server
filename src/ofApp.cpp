@@ -423,8 +423,11 @@ void ofApp::update(){
     }
     
     //check first list member and remove if older than 10 seconds
-    int now = ofGetElapsedTimeMillis();
-    if(now - ofToInt(eventList[0][0]) > 10000) eventList.erase(eventList.begin());
+    if( eventList.size() > 0){
+        int now = ofGetElapsedTimeMillis();
+        int oldest = ofToInt(eventList[0][0]);
+        if(now - oldest > 10000) eventList.erase(eventList.begin());
+    }
 }
 
 

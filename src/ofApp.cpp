@@ -182,6 +182,9 @@ void ofApp::update(){
                         // set change
                         disc.setThickness(index, newValue);
                         
+                        //reward if match
+                        eventMatch(IP, parameter, change);
+                        
                         // form event
                         vector<string> newEvent;
                         newEvent.push_back(time);
@@ -213,6 +216,9 @@ void ofApp::update(){
                         // set change
                         disc.setDensity(index, newValue);
                         
+                        //reward if match
+                        eventMatch(IP, parameter, change);
+                        
                         // form event
                         vector<string> newEvent;
                         newEvent.push_back(time);
@@ -241,6 +247,9 @@ void ofApp::update(){
                     if(newValue != oldValue){
                         // set change
                         disc.setTexture(index, newValue);
+                        
+                        //reward if match
+                        eventMatch(IP, parameter, change);
                         
                         // form event
                         vector<string> newEvent;
@@ -276,6 +285,9 @@ void ofApp::update(){
                         // set change
                         disc.setMute(index, newValue);
                         
+                        //reward if match
+                        eventMatch(IP, parameter, change);
+                        
                         // form event
                         vector<string> newEvent;
                         newEvent.push_back(time);
@@ -308,6 +320,9 @@ void ofApp::update(){
                         // set change
                         disc.setMoving(index, newValue);
                         
+                        //reward if match
+                        eventMatch(IP, parameter, change);
+                        
                         // form event
                         vector<string> newEvent;
                         newEvent.push_back(time);
@@ -328,15 +343,20 @@ void ofApp::update(){
                     string time = ofToString(ofGetElapsedTimeMillis());
                     string IP = server.getClientIP(i);
                     string parameter = title;
+                    string change = "reset";
                     
                     // set change
                     disc.resetPerlin[index] = 1;
+                    
+                    //reward if match
+                    eventMatch(IP, parameter, change);
                     
                     // form event
                     vector<string> newEvent;
                     newEvent.push_back(time);
                     newEvent.push_back(IP);
                     newEvent.push_back(parameter);
+                    newEvent.push_back(change);
                     
                     //add to eventList
                     eventList.push_back(newEvent);

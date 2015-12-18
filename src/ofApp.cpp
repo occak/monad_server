@@ -34,7 +34,7 @@ void ofApp::setup(){
     costTexture = -2;
     costMute = -2;
     costMove = -2;
-    reward = 4;
+    reward = 3;
 }
 //--------------------------------------------------------------
 void ofApp::exit(){
@@ -85,6 +85,16 @@ void ofApp::update(){
                     }
                     _player->setConnection(true);
                     
+                    // send player status
+                    string playerInfo;
+                    playerInfo += "playerInfo//";
+                    playerInfo += "IP: " + ofToString(_player->getIP()) + "//";
+                    playerInfo += "color: " + ofToString(_player->getColor()) + "//";
+                    playerInfo += "life: " + ofToString(_player->getLife()) + "//";
+                    playerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
+                    if(rejoin == true) playerInfo += "nick: " + _player->getNick() + "//";
+                    server.send(i, playerInfo);
+                    
                     //send game costs
                     string costs = "costs//";
                     costs += "costRadius: " + ofToString(costRadius) + "//";
@@ -96,17 +106,8 @@ void ofApp::update(){
                     costs += "reward: " + ofToString(reward) + "//";
                     server.send(i, costs);
                     
-                    
-                    string playerInfo; // send player status
-                    playerInfo += "playerInfo//";
-                    playerInfo += "IP: " + ofToString(_player->getIP()) + "//";
-                    playerInfo += "color: " + ofToString(_player->getColor()) + "//";
-                    playerInfo += "life: " + ofToString(_player->getLife()) + "//";
-                    playerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
-                    if(rejoin == true) playerInfo += "nick: " + _player->getNick() + "//";
-                    server.send(i, playerInfo);
-                    
-                    if(players.size() > 1){ //if there are other players, also send their info
+                    //if there are other players, also send their info
+                    if(players.size() > 1){
                         for(int j = 0; j < players.size(); j++){
                             if( players[j] != _player && players[j]->isConnected()){
                                 string otherPlayers = "otherPlayers//";
@@ -120,7 +121,8 @@ void ofApp::update(){
                         }
                     }
                     
-                    string newPlayerInfo;   //send player information to all other clients
+                    //send player information to all other clients
+                    string newPlayerInfo;
                     newPlayerInfo += "otherPlayers//";
                     newPlayerInfo += "IP: " + ofToString(_player->getIP()) + "//";
                     newPlayerInfo += "color: " + ofToString(_player->getColor()) + "//";
@@ -131,7 +133,8 @@ void ofApp::update(){
                         if(j != i) server.send(j, newPlayerInfo);
                     }
                     
-                    string state;   //prepare to send the current state of the server
+                    //prepare to send the current state of the server
+                    string state;
                     state += "state//";
                     state += "discIndex: " + ofToString(disc.getDiscIndex()) + "//";
                     for(int j = 0; j < disc.getDiscIndex(); j++){
@@ -534,21 +537,24 @@ void ofApp::eventMatch(string IP, string parameter, string change){
     for (int i = 0; i < eventList.size(); i++) {
         
         //check if other players recently changed the same parameter the same way
-        if(IP != eventList[i][1] && parameter == eventList[i][2] && change == eventList[i][2]){
+        if(IP != eventList[i][1] && parameter == eventList[i][2] && change == eventList[i][3]){
             
             //reward imitating player
-            string lifeUpdate = "life//";
+            string lifeUpdate = "reward//";
             lifeUpdate += "IP: "+ IP + "//";
             lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
             server.sendToAll(lifeUpdate);
             
+            
+            cout<< IP + " rewarded" <<endl;
+            
             //reward imitated player
-            lifeUpdate = "life//";
+            lifeUpdate = "reward//";
             lifeUpdate += "IP: "+ eventList[i][1] + "//";
             lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
             server.sendToAll(lifeUpdate);
             
-            
+            cout<< eventList[i][1] + " rewarded" <<endl;
         }
     }
     

@@ -23,14 +23,14 @@ void ofApp::setup(){
     
     // set up values of objects
     disc.setup();
-
     
-//    sound.setup(&disc);
+    
+    //    sound.setup(&disc);
     
     // set up game costs
-    costRadius = -1;
-    costDensity = -1;
-    costRotation = -1;
+    costRadius = -2;
+    costDensity = -2;
+    costRotation = -2;
     costTexture = -2;
     costMute = -2;
     costMove = -2;
@@ -95,43 +95,6 @@ void ofApp::update(){
                     if(rejoin == true) playerInfo += "nick: " + _player->getNick() + "//";
                     server.send(i, playerInfo);
                     
-                    //send game costs
-                    string costs = "costs//";
-                    costs += "costRadius: " + ofToString(costRadius) + "//";
-                    costs += "costDensity: " + ofToString(costDensity) + "//";
-                    costs += "costRotation: " + ofToString(costRotation) + "//";
-                    costs += "costTexture: " + ofToString(costTexture) + "//";
-                    costs += "costMute: " + ofToString(costMute) + "//";
-                    costs += "costMove: " + ofToString(costMove) + "//";
-                    costs += "reward: " + ofToString(reward) + "//";
-                    server.send(i, costs);
-                    
-                    //if there are other players, also send their info
-                    if(players.size() > 1){
-                        for(int j = 0; j < players.size(); j++){
-                            if( players[j] != _player && players[j]->isConnected()){
-                                string otherPlayers = "otherPlayers//";
-                                otherPlayers += "IP: " + ofToString(players[j]->getIP()) + "//";
-                                otherPlayers += "color: " + ofToString(players[j]->getColor()) + "//";
-                                otherPlayers += "life: " + ofToString(players[j]->getLife()) + "//";
-                                otherPlayers += "index: " + ofToString(players[j]->getDiscIndex()) + "//";
-                                otherPlayers += "nick: " + players[j]->getNick() + "//";
-                                server.send(i, otherPlayers);
-                            }
-                        }
-                    }
-                    
-                    //send player information to all other clients
-                    string newPlayerInfo;
-                    newPlayerInfo += "otherPlayers//";
-                    newPlayerInfo += "IP: " + ofToString(_player->getIP()) + "//";
-                    newPlayerInfo += "color: " + ofToString(_player->getColor()) + "//";
-                    newPlayerInfo += "life: " + ofToString(_player->getLife()) + "//";
-                    newPlayerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
-                    newPlayerInfo += "nick: " + _player->getNick() + "//";
-                    for (int j = 0; j < server.getLastID(); j++) {
-                        if(j != i) server.send(j, newPlayerInfo);
-                    }
                     
                     //prepare to send the current state of the server
                     string state;
@@ -152,13 +115,53 @@ void ofApp::update(){
                     server.send(i, state);  //send current state to new client
                     
                     
+                    //if there are other players, also send their info
+                    if(players.size() > 1){
+                        for(int j = 0; j < players.size(); j++){
+                            if( players[j] != _player && players[j]->isConnected()){
+                                string otherPlayers = "otherPlayers//";
+                                otherPlayers += "IP: " + ofToString(players[j]->getIP()) + "//";
+                                otherPlayers += "color: " + ofToString(players[j]->getColor()) + "//";
+                                otherPlayers += "life: " + ofToString(players[j]->getLife()) + "//";
+                                otherPlayers += "index: " + ofToString(players[j]->getDiscIndex()) + "//";
+                                otherPlayers += "nick: " + players[j]->getNick() + "//";
+                                server.send(i, otherPlayers);
+                            }
+                        }
+                    }
+                    
+                    
+                    //send player information to all other clients
+                    string newPlayerInfo;
+                    newPlayerInfo += "otherPlayers//";
+                    newPlayerInfo += "IP: " + ofToString(_player->getIP()) + "//";
+                    newPlayerInfo += "color: " + ofToString(_player->getColor()) + "//";
+                    newPlayerInfo += "life: " + ofToString(_player->getLife()) + "//";
+                    newPlayerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
+                    newPlayerInfo += "nick: " + _player->getNick() + "//";
+                    for (int j = 0; j < server.getLastID(); j++) {
+                        if(j != i) server.send(j, newPlayerInfo);
+                    }
+                    
+                    //send game costs
+                    string costs = "costs//";
+                    costs += "costRadius: " + ofToString(costRadius) + "//";
+                    costs += "costDensity: " + ofToString(costDensity) + "//";
+                    costs += "costRotation: " + ofToString(costRotation) + "//";
+                    costs += "costTexture: " + ofToString(costTexture) + "//";
+                    costs += "costMute: " + ofToString(costMute) + "//";
+                    costs += "costMove: " + ofToString(costMove) + "//";
+                    costs += "reward: " + ofToString(reward) + "//";
+                    server.send(i, costs);
+                    
+                    
                     cout<< "initialize " + ofToString(server.getClientIP(i)) <<endl;
                     
                 }
                 /////////////////////////////////////////////
                 
                 /////////////single changes//////////////////
-                else if (title == "rotationSpeed"){
+                if (title == "rotationSpeed"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -166,7 +169,7 @@ void ofApp::update(){
                     disc.setRotationSpeed(index, ofToFloat(nameValue[1]));
                 }
                 
-                else if (title == "radius"){
+                if (title == "radius"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -185,22 +188,19 @@ void ofApp::update(){
                         // set change
                         disc.setThickness(index, newValue);
                         
-                        //reward if match
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
                         eventMatch(IP, parameter, change);
                         
-                        // form event
-                        vector<string> newEvent;
-                        newEvent.push_back(time);
-                        newEvent.push_back(IP);
-                        newEvent.push_back(parameter);
-                        newEvent.push_back(change);
-                        
-                        //add to eventList
-                        eventList.push_back(newEvent);
                     }
                 }
                 
-                else if (title == "density"){
+                if (title == "density"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -219,22 +219,18 @@ void ofApp::update(){
                         // set change
                         disc.setDensity(index, newValue);
                         
-                        //reward if match
-                        eventMatch(IP, parameter, change);
-                        
-                        // form event
-                        vector<string> newEvent;
-                        newEvent.push_back(time);
-                        newEvent.push_back(IP);
-                        newEvent.push_back(parameter);
-                        newEvent.push_back(change);
-                        
                         //add to eventList
-                        eventList.push_back(newEvent);
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
                     }
                 }
                 
-                else if (title == "texture"){
+                if (title == "texture"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -251,25 +247,21 @@ void ofApp::update(){
                         // set change
                         disc.setTexture(index, newValue);
                         
-                        //reward if match
-                        eventMatch(IP, parameter, change);
-                        
-                        // form event
-                        vector<string> newEvent;
-                        newEvent.push_back(time);
-                        newEvent.push_back(IP);
-                        newEvent.push_back(parameter);
-                        newEvent.push_back(change);
-                        
                         //add to eventList
-                        eventList.push_back(newEvent);
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
                     }
-
+                    
                     
                     
                 }
                 
-                else if (title == "mute"){
+                if (title == "mute"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -288,22 +280,18 @@ void ofApp::update(){
                         // set change
                         disc.setMute(index, newValue);
                         
-                        //reward if match
-                        eventMatch(IP, parameter, change);
-                        
-                        // form event
-                        vector<string> newEvent;
-                        newEvent.push_back(time);
-                        newEvent.push_back(IP);
-                        newEvent.push_back(parameter);
-                        newEvent.push_back(change);
-                        
                         //add to eventList
-                        eventList.push_back(newEvent);
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
                     }
                 }
                 
-                else if (title == "move"){
+                if (title == "move"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -323,23 +311,19 @@ void ofApp::update(){
                         // set change
                         disc.setMoving(index, newValue);
                         
-                        //reward if match
-                        eventMatch(IP, parameter, change);
-                        
-                        // form event
-                        vector<string> newEvent;
-                        newEvent.push_back(time);
-                        newEvent.push_back(IP);
-                        newEvent.push_back(parameter);
-                        newEvent.push_back(change);
-                        
                         //add to eventList
-                        eventList.push_back(newEvent);
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
                     }
                     
                 }
                 
-                else if (title == "moveReset"){
+                if (title == "moveReset"){
                     int index = ofToInt(received[1]);
                     
                     // prepare event record
@@ -351,46 +335,42 @@ void ofApp::update(){
                     // set change
                     disc.resetPerlin[index] = 1;
                     
-                    //reward if match
-                    eventMatch(IP, parameter, change);
-                    
-                    // form event
-                    vector<string> newEvent;
-                    newEvent.push_back(time);
-                    newEvent.push_back(IP);
-                    newEvent.push_back(parameter);
-                    newEvent.push_back(change);
-                    
                     //add to eventList
-                    eventList.push_back(newEvent);
+                    eventAdd(time, IP, parameter, change);
+                    
+                    //check and remove similar
+                    eventRemoveSame(time, IP, parameter, change);
+                    
+                    //reward if match with others
+                    eventMatch(IP, parameter, change);
                 }
                 
-            
-                else if (title == "moveAll"){
+                
+                if (title == "moveAll"){
                     for(int i = 0; i<disc.getDiscIndex(); i++){
                         disc.setMoving(i, 1);
                     }
                 }
                 
-                else if (title == "stopAll"){
+                if (title == "stopAll"){
                     for(int i = 0; i<disc.getDiscIndex(); i++){
                         disc.setMoving(i, 0);
                     }
                 }
                 
-                else if (title == "resetAll"){
+                if (title == "resetAll"){
                     for(int i = 0; i<disc.getDiscIndex(); i++){
                         disc.resetPerlin[i] = 1;
                     }
                 }
                 
-                else if (title == "zPosition"){
+                if (title == "zPosition"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
                 }
                 
-                else if (title == "zPositionAll"){
+                if (title == "zPositionAll"){
                     for (int i = 1; i < received.size()-1; i++) {
                         vector<string> nameValue;
                         nameValue = ofSplitString(received[i], ": ");
@@ -398,13 +378,13 @@ void ofApp::update(){
                     }
                 }
                 
-                else if (title == "counter"){
+                if (title == "counter"){
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     disc.setCounter(ofToInt(nameValue[0]), ofToInt(nameValue[1]));
                 }
                 
-                else if (title == "life"){
+                if (title == "life"){
                     Player *_player = NULL;
                     for(int j = 1; j < received.size(); j++ ){
                         vector<string> playerData = ofSplitString(received[j], ": ");
@@ -420,7 +400,7 @@ void ofApp::update(){
                     }
                 }
                 
-                else if (title == "otherPlayersIndex"){
+                if (title == "otherPlayersIndex"){
                     for(int i = 1; i < received.size(); i++ ){
                         vector<string> playerData = ofSplitString(received[i], ": ");
                         int thisPlayer;
@@ -436,7 +416,7 @@ void ofApp::update(){
                     }
                 }
                 
-                else if (title == "goodbye"){
+                if (title == "goodbye"){
                     cout<< str << endl;
                     for (int j = 0; j < players.size(); j++) {
                         if(server.getClientIP(i) == players[j]->getIP()) {
@@ -453,7 +433,7 @@ void ofApp::update(){
             for(int j = 0; j < players.size(); j++){
                 if(server.getClientIP(i) == players[j]->getIP()) players[j]->setConnection(false);
             }
-//            server.sendToAll("goodbye//"+server.getClientIP(i));
+            //            server.sendToAll("goodbye//"+server.getClientIP(i));
         }
     }
     
@@ -481,13 +461,16 @@ void ofApp::draw(){
     
     
     //Add names of online players//
-    
-    
+    for(int i = 0; i < players.size(); i++){
+        
+        if(players[i]->isConnected()) ofDrawBitmapString(players[i]->getNick(), 10, 60+i*20);
+        
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -512,7 +495,7 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -531,7 +514,6 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 //--------------------------------------------------------------
-
 void ofApp::eventMatch(string IP, string parameter, string change){
     
     for (int i = 0; i < eventList.size(); i++) {
@@ -539,24 +521,52 @@ void ofApp::eventMatch(string IP, string parameter, string change){
         //check if other players recently changed the same parameter the same way
         if(IP != eventList[i][1] && parameter == eventList[i][2] && change == eventList[i][3]){
             
-            //reward imitating player
-            string lifeUpdate = "reward//";
-            lifeUpdate += "IP: "+ IP + "//";
-            lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
-            server.sendToAll(lifeUpdate);
-            
-            
-            cout<< IP + " rewarded" <<endl;
-            
-            //reward imitated player
-            lifeUpdate = "reward//";
-            lifeUpdate += "IP: "+ eventList[i][1] + "//";
-            lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
-            server.sendToAll(lifeUpdate);
-            
-            cout<< eventList[i][1] + " rewarded" <<endl;
+            //check which players did and give them points
+            for(int j = 0; j < players.size(); j++){
+                
+                if(players[j]->getIP() == IP || players[j]->getIP() == eventList[i][1])
+                {
+                    players[j]->changeLife(reward);
+                    
+                    //send to clients
+                    string lifeUpdate = "reward//";
+                    lifeUpdate += "IP: "+ players[j]->getIP() + "//";
+                    lifeUpdate += "lifeChange: "+ofToString(reward) + "//";
+                    
+                    server.sendToAll(lifeUpdate);
+                    
+                }
+            }
         }
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::eventAdd(string time, string IP, string parameter, string change){
+    
+    // form event
+    vector<string> newEvent;
+    newEvent.push_back(time);
+    newEvent.push_back(IP);
+    newEvent.push_back(parameter);
+    newEvent.push_back(change);
+    
+    //add to eventList
+    eventList.push_back(newEvent);
     
 }
 
+//--------------------------------------------------------------
+void ofApp::eventRemoveSame(string time, string IP, string parameter, string change){
+    
+    for (int i = 0; i < eventList.size(); i++) {
+        if (eventList[i][0] != time &&      //different time
+            eventList[i][1] == IP &&        //same player
+            eventList[i][2] == parameter && //same parameter
+            eventList[i][3] == change       //same change
+            ) {
+            //remove that event
+            eventList.erase(eventList.begin()+i);
+        }
+    }
+}

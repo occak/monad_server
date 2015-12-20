@@ -45,6 +45,8 @@ class ofApp : public ofBaseApp{
 private:
     
     void eventMatch(string IP, string parameter, string change);
+    void eventAdd(string time, string IP, string parameter, string change);
+    void eventRemoveSame(string time, string IP, string parameter, string change);
     
     bool fullScreen;
     int playerNum;

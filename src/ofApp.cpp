@@ -34,6 +34,7 @@ void ofApp::setup(){
     costTexture = -2;
     costMute = -2;
     costMove = -2;
+    costSpike = -2,
     reward = 3;
 }
 //--------------------------------------------------------------
@@ -107,6 +108,7 @@ void ofApp::update(){
                         state += "density"+ofToString(j) + ": " + ofToString(disc.getDensity(j)) + "//";
                         state += "texture"+ofToString(j) + ": " + ofToString(disc.getTexture(j)) + "//";
                         state += "zPosition"+ofToString(j) + ": " + ofToString(disc.getPosition(j)) + "//";
+                        state += "spike"+ofToString(j) + ": " + ofToString(disc.getSpikeDistance(j)) + "//";
                         state += "seed"+ofToString(j) + ": " + ofToString(disc.getSeed(j)) + "//";
                         state += "counter"+ofToString(j) + ": "+ ofToString(disc.getCounter(j)) + "//";
                         state += "mute"+ofToString(j) + ": " + ofToString(disc.isMute(j)) + "//";
@@ -151,6 +153,7 @@ void ofApp::update(){
                     costs += "costTexture: " + ofToString(costTexture) + "//";
                     costs += "costMute: " + ofToString(costMute) + "//";
                     costs += "costMove: " + ofToString(costMove) + "//";
+                    costs += "costSpike: " + ofToString(costSpike) + "//";
                     costs += "reward: " + ofToString(reward) + "//";
                     server.send(i, costs);
                     
@@ -259,6 +262,41 @@ void ofApp::update(){
                     
                     
                     
+                }
+                
+                if (title == "spike"){
+                
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToFloat(nameValue[1]);
+                    int oldValue = disc.getSpikeDistance(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                     
+                        // set change
+                        disc.setSpikeDistance(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                
+                
+                
                 }
                 
                 if (title == "mute"){

@@ -33,6 +33,7 @@ class ofApp : public ofBaseApp{
     costRotation,
     costMute,
     costMove,
+    costSpike,
     reward;
     
     //TCP

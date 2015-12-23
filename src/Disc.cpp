@@ -37,6 +37,8 @@ void Disc::setup(){
         // set depths, all zero by default
         zPosition.push_back(0.);
         
+        spikeDistance.push_back(0.);
+        
         counter.push_back(0.);
         
         //z-motion is off
@@ -346,18 +348,16 @@ void Disc::setSeed(int index, int value){
     
     seed[index] = value;
 }
-//
-//float Disc::getScale(int index) const{
-//    
-//    return scale[index];
-//}
-//
-//float Disc::getScaleSize() const{
-//    
-//    return scale.size();
-//}
-//
-//void Disc::setScale(int index, float value){
-//    
-//    scale[index] = value;
-//}
+//----------------------------------
+float Disc::getSpikeDistance(int index) const{
+    
+    return spikeDistance[index];
+    
+}
+
+//----------------------------------
+void Disc::setSpikeDistance(int index, float value){
+    
+    spikeDistance[index] = value;
+    
+}

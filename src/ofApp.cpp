@@ -189,8 +189,10 @@ void ofApp::update(){
                         if(oldIndex != disc.getDiscIndex()){
                             
                             string addDisc = "addDisc//IP: " + _player->getIP() +
+                            "//" + "total: " + ofToString(disc.getDiscIndex()) +
                             "//" + "index: " + ofToString(disc.getDiscIndex()-1) +
                             "//" + "seed: " + ofToString(disc.getSeed(disc.getDiscIndex()-1));
+                            
                             
                             server.sendToAll(addDisc);
                             

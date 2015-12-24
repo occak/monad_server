@@ -32,8 +32,8 @@ void ofApp::setup(){
     costDensity = -2;
     costRotation = -2;
     costTexture = -2;
-    costMute = -2;
-    costMove = -2;
+    costMute = -1;
+    costMove = -1;
     costSpike = -2,
     reward = 3;
 }
@@ -163,6 +163,42 @@ void ofApp::update(){
                 }
                 /////////////////////////////////////////////
                 
+                /////////////newDisc////////////////////////
+                if ( title == "newDisc" ){
+                    
+                    cout<< str << endl;
+                    
+                    Player* _player = new Player();
+                    
+                    //match IP
+                    string thisIP = server.getClientIP(i);
+                    _player->setIP(thisIP);
+                    for(int j = 0; j < players.size(); j++){
+                        if(_player->getIP() == players[j]->getIP()) {
+                            _player = players[j];
+                            break;
+                        }
+                    }
+                    
+                    if(_player != NULL){
+                        
+                        int oldIndex = disc.getDiscIndex();
+                        disc.addDisc();
+                        
+                        //check if we reach maximum disc number
+                        if(oldIndex != disc.getDiscIndex()){
+                            
+                            string addDisc = "addDisc//IP: " + _player->getIP() +
+                            "//" + "index: " + ofToString(disc.getDiscIndex()-1) +
+                            "//" + "seed: " + ofToString(disc.getSeed(disc.getDiscIndex()-1));
+                            
+                            server.sendToAll(addDisc);
+                            
+                        }
+                    }
+                    
+                    
+                }
                 /////////////single changes//////////////////
                 if (title == "rotationSpeed"){
                     vector<string> nameValue;
@@ -265,7 +301,7 @@ void ofApp::update(){
                 }
                 
                 if (title == "spike"){
-                
+                    
                     vector<string> nameValue;
                     nameValue = ofSplitString(received[1], ": ");
                     int index = ofToInt(nameValue[0]);
@@ -281,7 +317,7 @@ void ofApp::update(){
                     else if (newValue < oldValue) change = "decrease";
                     
                     if(newValue != oldValue){
-                     
+                        
                         // set change
                         disc.setSpikeDistance(index, newValue);
                         
@@ -294,9 +330,9 @@ void ofApp::update(){
                         //reward if match with others
                         eventMatch(IP, parameter, change);
                     }
-                
-                
-                
+                    
+                    
+                    
                 }
                 
                 if (title == "mute"){
@@ -482,7 +518,6 @@ void ofApp::update(){
         if(now - oldest > 10000) eventList.erase(eventList.begin());
     }
 }
-
 
 //--------------------------------------------------------------
 void ofApp::draw(){

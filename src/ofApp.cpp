@@ -19,7 +19,7 @@ void ofApp::setup(){
     
     //set up network
     server.setup(10002);
-    server.setMessageDelimiter("varianet");
+    server.setMessageDelimiter("vnet");
     
     // set up values of objects
     disc.setup();
@@ -34,7 +34,8 @@ void ofApp::setup(){
     costTexture = -2;
     costMute = -1;
     costMove = -1;
-    costSpike = -2,
+    costSpike = -2;
+    costCreate = -10;
     reward = 5;
 }
 //--------------------------------------------------------------
@@ -136,6 +137,7 @@ void ofApp::update(){
                     costs += "costMute: " + ofToString(costMute) + "//";
                     costs += "costMove: " + ofToString(costMove) + "//";
                     costs += "costSpike: " + ofToString(costSpike) + "//";
+                    costs += "costCreate: " + ofToString(costCreate) + "//";
                     costs += "reward: " + ofToString(reward) + "//";
                     server.send(i, costs);
                     

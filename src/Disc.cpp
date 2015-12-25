@@ -10,7 +10,7 @@
 
 void Disc::setup(){
     
-    discIndex = 0;    // 10 discs
+    discIndex = 0;    // 0 discs
     
     for(int i = 0; i < discIndex; i++){
         

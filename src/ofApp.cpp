@@ -183,11 +183,13 @@ void ofApp::update(){
                     
                     if(_player != NULL){
                         
-                        int oldIndex = disc.getDiscIndex();
-                        disc.addDisc();
+                        int total = disc.getDiscIndex();
+                        
                         
                         //check if we reach maximum disc number
-                        if(oldIndex != disc.getDiscIndex()){
+                        if(total != 9){
+                            
+                            disc.addDisc();
                             
                             string addDisc = "addDisc//IP: " + _player->getIP() +
                             "//" + "total: " + ofToString(disc.getDiscIndex()) +

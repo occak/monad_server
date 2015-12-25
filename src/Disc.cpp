@@ -242,6 +242,7 @@ float Disc::getNetRotationSpeed(int index) const{
         return rotationSpeed[index]+allBelow;
     }
     else return rotationSpeed[0];
+    
 }
 //----------------------------------
 

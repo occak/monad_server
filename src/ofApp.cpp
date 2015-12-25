@@ -35,7 +35,7 @@ void ofApp::setup(){
     costMute = -1;
     costMove = -1;
     costSpike = -2,
-    reward = 3;
+    reward = 5;
 }
 //--------------------------------------------------------------
 void ofApp::exit(){
@@ -97,24 +97,6 @@ void ofApp::update(){
                     server.send(i, playerInfo);
                     
                     
-                    //prepare to send the current state of the server
-                    string state;
-                    state += "state//";
-                    state += "discIndex: " + ofToString(disc.getDiscIndex()) + "//";
-                    for(int j = 0; j < disc.getDiscIndex(); j++){
-                        state += "radius"+ofToString(j) + ": " + ofToString(disc.getRadius(j)) + "//";
-                        state += "rotation"+ofToString(j) + ": " + ofToString(disc.getRotation(j)) + "//";
-                        state += "rotationSpeed"+ofToString(j) + ": " + ofToString(disc.getNetRotationSpeed(j)) + "//";
-                        state += "density"+ofToString(j) + ": " + ofToString(disc.getDensity(j)) + "//";
-                        state += "texture"+ofToString(j) + ": " + ofToString(disc.getTexture(j)) + "//";
-                        state += "zPosition"+ofToString(j) + ": " + ofToString(disc.getPosition(j)) + "//";
-                        state += "spike"+ofToString(j) + ": " + ofToString(disc.getSpikeDistance(j)) + "//";
-                        state += "seed"+ofToString(j) + ": " + ofToString(disc.getSeed(j)) + "//";
-                        state += "counter"+ofToString(j) + ": "+ ofToString(disc.getCounter(j)) + "//";
-                        state += "mute"+ofToString(j) + ": " + ofToString(disc.isMute(j)) + "//";
-                        state += "move"+ofToString(j) + ": " + ofToString(disc.isMoving(j)) + "//";
-                    }
-                    server.send(i, state);  //send current state to new client
                     
                     
                     //if there are other players, also send their info
@@ -157,6 +139,25 @@ void ofApp::update(){
                     costs += "reward: " + ofToString(reward) + "//";
                     server.send(i, costs);
                     
+                    //prepare to send the current state of the server
+                    string state;
+                    state += "state//";
+                    state += "discIndex: " + ofToString(disc.getDiscIndex()) + "//";
+                    for(int j = 0; j < disc.getDiscIndex(); j++){
+                        state += "radius"+ofToString(j) + ": " + ofToString(disc.getRadius(j)) + "//";
+                        state += "rotation"+ofToString(j) + ": " + ofToString(disc.getRotation(j)) + "//";
+                        state += "rotationSpeed"+ofToString(j) + ": " + ofToString(disc.getNetRotationSpeed(j)) + "//";
+                        state += "density"+ofToString(j) + ": " + ofToString(disc.getDensity(j)) + "//";
+                        state += "texture"+ofToString(j) + ": " + ofToString(disc.getTexture(j)) + "//";
+                        state += "zPosition"+ofToString(j) + ": " + ofToString(disc.getPosition(j)) + "//";
+                        state += "spike"+ofToString(j) + ": " + ofToString(disc.getSpikeDistance(j)) + "//";
+                        state += "seed"+ofToString(j) + ": " + ofToString(disc.getSeed(j)) + "//";
+                        state += "counter"+ofToString(j) + ": "+ ofToString(disc.getCounter(j)) + "//";
+                        state += "mute"+ofToString(j) + ": " + ofToString(disc.isMute(j)) + "//";
+                        state += "move"+ofToString(j) + ": " + ofToString(disc.isMoving(j)) + "//";
+                    }
+                    server.send(i, state);  //send current state to new client
+                    
                     
                     cout<< "initialize " + ofToString(server.getClientIP(i)) <<endl;
                     
@@ -193,7 +194,7 @@ void ofApp::update(){
                             "//" + "index: " + ofToString(disc.getDiscIndex()-1) +
                             "//" + "seed: " + ofToString(disc.getSeed(disc.getDiscIndex()-1));
                             
-                            
+                            cout<< addDisc <<endl;
                             server.sendToAll(addDisc);
                             
                         }
@@ -507,9 +508,12 @@ void ofApp::update(){
         }
         else{
             for(int j = 0; j < players.size(); j++){
-                if(server.getClientIP(i) == players[j]->getIP()) players[j]->setConnection(false);
+                if(server.getClientIP(i) == players[j]->getIP() && players[j]->isConnected()) {
+                    players[j]->setConnection(false);
+                    server.sendToAll("goodbye//"+players[j]->getNick());
+                }
             }
-            //            server.sendToAll("goodbye//"+server.getClientIP(i));
+            
         }
     }
     

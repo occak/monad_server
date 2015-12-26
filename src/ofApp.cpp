@@ -15,7 +15,6 @@
 void ofApp::setup(){
     
     ofSetVerticalSync(true);
-    //    ofBackground(255);
     
     //set up network
     server.setup(10002);
@@ -32,12 +31,13 @@ void ofApp::setup(){
     costDensity = -2;
     costRotation = -2;
     costTexture = -2;
-    costMute = -1;
-    costMove = -1;
+    costMute = -2;
+    costMove = -2;
     costSpike = -2;
-    costCreate = -10;
-    reward = 5;
+    costCreate = -20;
+    reward = 3;
 }
+
 //--------------------------------------------------------------
 void ofApp::exit(){
     
@@ -169,8 +169,6 @@ void ofApp::update(){
                 /////////////newDisc////////////////////////
                 if ( title == "newDisc" ){
                     
-                    cout<< str << endl;
-                    
                     Player* _player = new Player();
                     
                     //match IP
@@ -198,8 +196,15 @@ void ofApp::update(){
                             "//" + "index: " + ofToString(disc.getDiscIndex()-1) +
                             "//" + "seed: " + ofToString(disc.getSeed(disc.getDiscIndex()-1));
                             
-                            cout<< addDisc <<endl;
                             server.sendToAll(addDisc);
+                            
+                            //update life
+                            _player->changeLife(costCreate);
+                            
+                            string lifeUpdate = "life//";
+                            lifeUpdate += "IP: "+ofToString(_player->getIP()) + "//";
+                            lifeUpdate += "lifeChange: "+ofToString(costCreate) + "//";
+                            server.sendToAll(lifeUpdate);
                             
                         }
                     }
@@ -525,7 +530,7 @@ void ofApp::update(){
     if( eventList.size() > 0){
         int now = ofGetElapsedTimeMillis();
         int oldest = ofToInt(eventList[0][0]);
-        if(now - oldest > 10000) eventList.erase(eventList.begin());
+        if(now - oldest > 5000) eventList.erase(eventList.begin());
     }
 }
 

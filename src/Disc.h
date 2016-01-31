@@ -27,6 +27,7 @@ class Disc{
     
     int getDiscIndex() const;
     void setDiscIndex(int value);
+    void addDisc();
     
     float getRadius(int index) const;
     void setRadius(int index, float size);
@@ -76,6 +77,9 @@ class Disc{
     int getSeed(int index) const;
     void setSeed(int index, int value);
     
+    float getSpikeDistance(int index) const;
+    void setSpikeDistance(int index, float value);
+    
     float getScale(int index) const;
     float getScaleSize() const;
     void setScale(int index, float value);
@@ -100,6 +104,8 @@ private:
     vector<float> density;
     
     vector<float> zPosition;
+    
+    vector<float> spikeDistance;;
     
     //adsr
     vector< vector <float> > envelope;

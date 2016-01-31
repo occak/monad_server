@@ -60,13 +60,13 @@ void Player::setColorByIndex(int index){
             color.set(50,153,187);
             break;
         case 2:
-            color.set(255,153,0);
-            break;
-        case 3:
             color.set(161,24,87);
             break;
-        case 4:
+        case 3:
             color.set(103,209,88);
+            break;
+        case 4:
+            color.set(255,153,0);
             break;
         default:
             break;
@@ -83,6 +83,14 @@ float Player::getLife() const{
 void Player::setLife(float newLife){
     
     life = newLife;
+    
+}
+
+void Player::changeLife(float amount){
+    
+    if(life + amount > 100) life = 100;
+    else if(life + amount < 0) life = 0;
+    else life += amount;
     
 }
 

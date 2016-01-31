@@ -10,7 +10,7 @@
 
 void Disc::setup(){
     
-    discIndex = 10;    // 10 discs
+    discIndex = 0;    // 0 discs
     
     for(int i = 0; i < discIndex; i++){
         
@@ -18,14 +18,9 @@ void Disc::setup(){
         if (i == 0) radii.push_back(15. + origin);
         else radii.push_back(radii[i-1] + 15.);
         
-        // generate texture densities, rule out non-symmetrics
+        // generate texture density
         float thisDensity = 30;
-//        while ((int) thisDensity % 360 != 0) {
-//            thisDensity = ofRandom(30) + 1;
-//            //            cout << "recalculating" << endl;
-//        }
         density.push_back(thisDensity);
-        //        cout << (int) thisDensity << endl;
         
         // determine their initial rotation angle and speed
         rotation.push_back(0);
@@ -36,6 +31,8 @@ void Disc::setup(){
         
         // set depths, all zero by default
         zPosition.push_back(0.);
+        
+        spikeDistance.push_back(0.);
         
         counter.push_back(0.);
         
@@ -86,7 +83,53 @@ void Disc::update(){
 }
 //----------------------------------
 
-void Disc::selectDisc(int x, int y){
+void Disc::addDisc(){
+    
+    
+    if(discIndex < 9) {
+        
+    discIndex++;
+    
+    int newIndex = discIndex - 1;
+    
+    // generate radius information of discs
+    if (newIndex == 0) radii.push_back(15. + origin);
+    else radii.push_back(radii[newIndex-1] + 15.);
+    
+    // generate texture densities, rule out non-symmetrics
+    float thisDensity = 30;
+    density.push_back(thisDensity);
+    //        cout << (int) thisDensity << endl;
+    
+    // determine their initial rotation angle and speed
+    rotation.push_back(0);
+    rotationSpeed.push_back(0);
+    
+    // determine texture type
+    texture.push_back(0);
+    
+    // set depths, all zero by default
+    zPosition.push_back(0.);
+    
+    //set spike position, initialize 0.
+    spikeDistance.push_back(0.);
+    
+    //sound
+    vector<float> adsr;
+    envelope.push_back(adsr);
+    setEnvelope(newIndex, getTexture(newIndex));
+    
+    //muting, all initially false
+    mute.push_back(0);
+    
+    //z-motion is off
+    perlin.push_back(0);
+    resetPerlin.push_back(0);
+    counter.push_back(0);
+    
+    seed.push_back((int) ofRandom(10000));
+    
+    }
     
 }
 //----------------------------------
@@ -199,6 +242,7 @@ float Disc::getNetRotationSpeed(int index) const{
         return rotationSpeed[index]+allBelow;
     }
     else return rotationSpeed[0];
+    
 }
 //----------------------------------
 
@@ -346,18 +390,16 @@ void Disc::setSeed(int index, int value){
     
     seed[index] = value;
 }
-//
-//float Disc::getScale(int index) const{
-//    
-//    return scale[index];
-//}
-//
-//float Disc::getScaleSize() const{
-//    
-//    return scale.size();
-//}
-//
-//void Disc::setScale(int index, float value){
-//    
-//    scale[index] = value;
-//}
+//----------------------------------
+float Disc::getSpikeDistance(int index) const{
+    
+    return spikeDistance[index];
+    
+}
+
+//----------------------------------
+void Disc::setSpikeDistance(int index, float value){
+    
+    spikeDistance[index] = value;
+    
+}

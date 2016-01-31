@@ -6,6 +6,7 @@
 #include "ofxNetwork.h"
 
 
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -24,16 +25,30 @@ class ofApp : public ofBaseApp{
     
     //ui
     void exit();
-    
+  
     //game
-    float costRadius, costTexture, costDensity, costRotation, costMute, costMove;
+    float   costRadius,
+    costTexture,
+    costDensity,
+    costRotation,
+    costMute,
+    costMove,
+    costSpike,
+    costCreate,
+    reward;
     
     //TCP
     ofxTCPServer server;
     vector<string> received;
     string title;
     
+    vector<vector<string> > eventList;
+    
 private:
+    
+    void eventMatch(string IP, string parameter, string change);
+    void eventAdd(string time, string IP, string parameter, string change);
+    void eventRemoveSame(string time, string IP, string parameter, string change);
     
     bool fullScreen;
     int playerNum;

@@ -31,11 +31,22 @@ void ofApp::setup(){
     costDensity = -2;
     costRotation = -2;
     costTexture = -2;
-    costMute = -2;
-    costMove = -2;
+    costMute = -1;
+    costMove = -1;
     costSpike = -2;
     costCreate = -20;
     reward = 3;
+
+
+//    costRadius = 0;
+//    costDensity = 0;
+//    costRotation = 0;
+//    costTexture = 0;
+//    costMute = 0;
+//    costMove = 0;
+//    costSpike = 0;
+//    costCreate = 0;
+//    reward = 3;
 }
 
 //--------------------------------------------------------------

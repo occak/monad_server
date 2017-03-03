@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>E778E4A6-5CEC-465D-AE8B-14DDF23AF2F1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>monad_server</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6C0383C34D6D06082DEF23D9B5D55B6D7AC4A6E1</key>
+		<string>https://github.com/occak/monad_server.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>monad_server.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6C0383C34D6D06082DEF23D9B5D55B6D7AC4A6E1</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/occak/monad_server.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6C0383C34D6D06082DEF23D9B5D55B6D7AC4A6E1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6C0383C34D6D06082DEF23D9B5D55B6D7AC4A6E1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>monad_server</string>
+		</dict>
+	</array>
+</dict>
+</plist>

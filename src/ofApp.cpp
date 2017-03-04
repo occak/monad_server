@@ -20,6 +20,11 @@ void ofApp::setup(){
     server.setup(10002);
     server.setMessageDelimiter("vnet");
     
+    udpSend.Create();
+    udpSend.ConnectMcast("127.0.0.1", 10003);
+    udpSend.SetNonBlocking(true);
+    
+    
     // set up values of objects
     disc.setup();
     
@@ -60,6 +65,8 @@ void ofApp::exit(){
 //--------------------------------------------------------------
 
 void ofApp::update(){
+    
+    
     
     disc.update();
     

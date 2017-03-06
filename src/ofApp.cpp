@@ -20,9 +20,11 @@ void ofApp::setup(){
     server.setup(10002);
     server.setMessageDelimiter("vnet");
     
-    udpSend.Create();
-    udpSend.ConnectMcast("127.0.0.1", 10003);
-    udpSend.SetNonBlocking(true);
+//    ofxUDPManager
+    udpReceive.Create();
+    udpReceive.Create();
+    udpReceive.Bind(10003);
+    udpReceive.SetNonBlocking(true);
     
     
     // set up values of objects
@@ -32,26 +34,26 @@ void ofApp::setup(){
     //    sound.setup(&disc);
     
     // set up game costs
-    costRadius = -2;
-    costDensity = -2;
-    costRotation = -2;
-    costTexture = -2;
-    costMute = -1;
-    costMove = -1;
-    costSpike = -2;
-    costCreate = -20;
-    reward = 3;
-
-
-//    costRadius = 0;
-//    costDensity = 0;
-//    costRotation = 0;
-//    costTexture = 0;
-//    costMute = 0;
-//    costMove = 0;
-//    costSpike = 0;
-//    costCreate = 0;
+//    costRadius = -2;
+//    costDensity = -2;
+//    costRotation = -2;
+//    costTexture = -2;
+//    costMute = -1;
+//    costMove = -1;
+//    costSpike = -2;
+//    costCreate = -20;
 //    reward = 3;
+
+
+    costRadius = 0;
+    costDensity = 0;
+    costRotation = 0;
+    costTexture = 0;
+    costMute = 0;
+    costMove = 0;
+    costSpike = 0;
+    costCreate = 0;
+    reward = 0;
 }
 
 //--------------------------------------------------------------
@@ -675,4 +677,15 @@ void ofApp::eventRemoveSame(string time, string IP, string parameter, string cha
             eventList.erase(eventList.begin()+i);
         }
     }
+}
+
+//--------------------------------------------------------------
+void ofApp::newUDPsender(const char *IP){
+    
+    ofxUDPManager newUDP;
+    newUDP.Create();
+    newUDP.Connect(IP, 10003);
+    
+    
+    
 }

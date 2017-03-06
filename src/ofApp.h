@@ -22,6 +22,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+        void newUDPsender(const char *IP);
     
     //ui
     void exit();
@@ -43,7 +44,7 @@ class ofApp : public ofBaseApp{
     string title;
     
     //UDP
-    ofxUDPManager udpSend;
+    vector<ofxUDPManager> udpSend;
     ofxUDPManager udpReceive;
     
     

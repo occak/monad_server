@@ -20,7 +20,7 @@ void ofApp::setup(){
     server.setup(10002);
     server.setMessageDelimiter("vnet");
     
-//    ofxUDPManager
+    //    ofxUDPManager
     udpReceive.Create();
     udpReceive.Bind(10003);
     udpReceive.SetNonBlocking(true);
@@ -33,17 +33,17 @@ void ofApp::setup(){
     //    sound.setup(&disc);
     
     // set up game costs
-//    costRadius = -2;
-//    costDensity = -2;
-//    costRotation = -2;
-//    costTexture = -2;
-//    costMute = -1;
-//    costMove = -1;
-//    costSpike = -2;
-//    costCreate = -20;
-//    reward = 3;
-
-
+    //    costRadius = -2;
+    //    costDensity = -2;
+    //    costRotation = -2;
+    //    costTexture = -2;
+    //    costMute = -1;
+    //    costMove = -1;
+    //    costSpike = -2;
+    //    costCreate = -20;
+    //    reward = 3;
+    
+    
     costRadius = 0;
     costDensity = 0;
     costRotation = 0;
@@ -71,342 +71,257 @@ void ofApp::update(){
     
     disc.update();
     
+    
+    //UDP receive
     char udpMessage[1000];
     udpReceive.Receive(udpMessage,1000);
     string message = udpMessage;
     if(message.length()>0){
         
         udpReceived = ofSplitString(message, "//");
-        udpTitle = received[0];
-        
+        udpTitle = udpReceived[0];
         
         /* these will be udp messages
          rot
          rad
          den
-         tex
+         tex - maybe not
          spk
-         mut
-         mov
-         movR
-         movA
-         stpA
-         rstA
+         mut - maybe not
+         mov - maybe not
+         movR - maybe not
+         movA - maybe not
+         stpA - maybe not
+         rstA - maybe not
          z
          zA
          cnt - counter
          lfe
          opi - other players index
+         
+         <<*set functions within event records, get them out!*>>
+         
          */
         
         if (udpTitle == "rot"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             
             disc.setRotationSpeed(index, ofToFloat(nameValue[1]));
         }
         
-        if (udpTitle == "rad"){
+        else if (udpTitle == "rad"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             float newValue = ofToFloat(nameValue[1]);
-            float oldValue = disc.getThickness(index);
+            // set change
+            disc.setThickness(index, newValue);
             
-            // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = udpTitle;
-//            string change;
-//            if (newValue > oldValue) change = "inc";
-//            else if (newValue < oldValue) change = "dec";
-//            
-//            if(newValue != oldValue){
-//                // set change
-//                disc.setThickness(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//                
-//            }
         }
         
-        
-        if (udpTitle == "den"){
+        else if (udpTitle == "den"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             int newValue = ofToFloat(nameValue[1]);
             int oldValue = disc.getDensity(index);
+            // set change
+            disc.setDensity(index, newValue);
             
-            // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change;
-//            if (newValue > oldValue) change = "inc";
-//            else if (newValue < oldValue) change = "dec";
-//            
-//            if(newValue != oldValue){
-//                // set change
-//                disc.setDensity(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//            }
         }
         
-        if (udpTitle == "tex"){
+        else if (udpTitle == "tex"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             int newValue = ofToInt(nameValue[1]);
             int oldValue = disc.getTexture(index);
             
-            // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change = ofToString(newValue);
-//            
-//            if(newValue != oldValue){
-//                // set change
-//                disc.setTexture(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//            }
-            
-            
-            
         }
         
-        if (udpTitle == "spk"){
+        else if (udpTitle == "spk"){
             
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             int newValue = ofToFloat(nameValue[1]);
-            int oldValue = disc.getSpikeDistance(index);
-            
-            // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change;
-//            if (newValue > oldValue) change = "inc";
-//            else if (newValue < oldValue) change = "dec";
-//            
-//            if(newValue != oldValue){
-//                
-//                // set change
-//                disc.setSpikeDistance(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//            }
-            
-            
+            // set change
+            disc.setSpikeDistance(index, newValue);
             
         }
         
-        if (udpTitle == "mut"){
+        else if (udpTitle == "mut"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             int newValue = ofToInt(nameValue[1]);
-            int oldValue = disc.isMute(index);
+            //            int oldValue = disc.isMute(index);
             
             // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change;
-//            if (newValue > oldValue) change = "inc";
-//            else if (newValue < oldValue) change = "dec";
-//            
-//            if(newValue != oldValue){
-//                // set change
-//                disc.setMute(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//            }
+            //            string time = ofToString(ofGetElapsedTimeMillis());
+            //            string IP = received[2];
+            //            string parameter = title;
+            //            string change;
+            //            if (newValue > oldValue) change = "inc";
+            //            else if (newValue < oldValue) change = "dec";
+            //
+            //            if(newValue != oldValue){
+            //                // set change
+            //                disc.setMute(index, newValue);
+            //
+            //                //add to eventList
+            //                eventAdd(time, IP, parameter, change);
+            //
+            //                //check and remove similar
+            //                eventRemoveSame(time, IP, parameter, change);
+            //
+            //                //reward if match with others
+            //                eventMatch(IP, parameter, change);
+            //            }
         }
         
-        if (udpTitle == "mov"){
+        else if (udpTitle == "mov"){
             vector<string> nameValue;
-            nameValue = ofSplitString(received[1], ": ");
+            nameValue = ofSplitString(udpReceived[1], ": ");
             int index = ofToInt(nameValue[0]);
             int newValue = ofToInt(nameValue[1]);
             int oldValue = disc.isMoving(index);
             
             
             // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change;
-//            if (newValue > oldValue) change = "inc";
-//            else if (newValue < oldValue) change = "dec";
-//            
-//            if(newValue != oldValue){
-//                // set change
-//                disc.setMoving(index, newValue);
-//                
-//                //add to eventList
-//                eventAdd(time, IP, parameter, change);
-//                
-//                //check and remove similar
-//                eventRemoveSame(time, IP, parameter, change);
-//                
-//                //reward if match with others
-//                eventMatch(IP, parameter, change);
-//            }
+            //            string time = ofToString(ofGetElapsedTimeMillis());
+            //            string IP = received[2];
+            //            string parameter = title;
+            //            string change;
+            //            if (newValue > oldValue) change = "inc";
+            //            else if (newValue < oldValue) change = "dec";
+            //
+            //            if(newValue != oldValue){
+            //                // set change
+            //                disc.setMoving(index, newValue);
+            //
+            //                //add to eventList
+            //                eventAdd(time, IP, parameter, change);
+            //
+            //                //check and remove similar
+            //                eventRemoveSame(time, IP, parameter, change);
+            //
+            //                //reward if match with others
+            //                eventMatch(IP, parameter, change);
+            //            }
             
         }
         
-        if (udpTitle == "movR"){
-            int index = ofToInt(received[1]);
+        else if (udpTitle == "movR"){
+            int index = ofToInt(udpReceived[1]);
             
             // prepare event record
-//            string time = ofToString(ofGetElapsedTimeMillis());
-//            string IP = received[2];
-//            string parameter = title;
-//            string change = "reset";
-//            
-//            // set change
-//            disc.resetPerlin[index] = 1;
-//            
-//            //add to eventList
-//            eventAdd(time, IP, parameter, change);
-//            
-//            //check and remove similar
-//            eventRemoveSame(time, IP, parameter, change);
-//            
-//            //reward if match with others
-//            eventMatch(IP, parameter, change);
+            //            string time = ofToString(ofGetElapsedTimeMillis());
+            //            string IP = received[2];
+            //            string parameter = title;
+            //            string change = "reset";
+            //
+            //            // set change
+            //            disc.resetPerlin[index] = 1;
+            //
+            //            //add to eventList
+            //            eventAdd(time, IP, parameter, change);
+            //
+            //            //check and remove similar
+            //            eventRemoveSame(time, IP, parameter, change);
+            //
+            //            //reward if match with others
+            //            eventMatch(IP, parameter, change);
         }
-
-            if (udpTitle == "movA"){
-                for(int i = 0; i<disc.getDiscIndex(); i++){
-                    disc.setMoving(i, 1);
-                }
+        
+        else if (udpTitle == "movA"){
+            for(int i = 0; i<disc.getDiscIndex(); i++){
+                disc.setMoving(i, 1);
             }
-            
-            if (udpTitle == "stpA"){
-                for(int i = 0; i<disc.getDiscIndex(); i++){
-                    disc.setMoving(i, 0);
-                }
+        }
+        
+        else if (udpTitle == "stpA"){
+            for(int i = 0; i<disc.getDiscIndex(); i++){
+                disc.setMoving(i, 0);
             }
-            
-            if (udpTitle == "rstA"){
-                for(int i = 0; i<disc.getDiscIndex(); i++){
-                    disc.resetPerlin[i] = 1;
-                }
+        }
+        
+        else if (udpTitle == "rstA"){
+            for(int i = 0; i<disc.getDiscIndex(); i++){
+                disc.resetPerlin[i] = 1;
             }
-            
-            if (udpTitle == "z"){
+        }
+        
+        else if (udpTitle == "z"){
+            vector<string> nameValue;
+            nameValue = ofSplitString(udpReceived[1], ": ");
+            disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
+        }
+        
+        else if (udpTitle == "zA"){
+            for (int i = 1; i < udpReceived.size()-1; i++) {
                 vector<string> nameValue;
-                nameValue = ofSplitString(received[1], ": ");
+                nameValue = ofSplitString(udpReceived[i], ": ");
                 disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
             }
-            
-            if (udpTitle == "zA"){
-                for (int i = 1; i < received.size()-1; i++) {
-                    vector<string> nameValue;
-                    nameValue = ofSplitString(received[i], ": ");
-                    disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
-                }
-            }
-            
-            if (udpTitle == "ctr"){
-                vector<string> nameValue;
-                nameValue = ofSplitString(received[1], ": ");
-                disc.setCounter(ofToInt(nameValue[0]), ofToInt(nameValue[1]));
-            }
-            
-            if (udpTitle == "lfe"){
-                Player *_player = NULL;
-                for(int j = 1; j < received.size(); j++ ){
-                    vector<string> playerData = ofSplitString(received[j], ": ");
-                    if (playerData[0] == "IP"){
-                        for (int k = 0; k < players.size(); k++) {
-                            if(playerData[1] == players[k]->getIP()) {
-                                _player = players[k];
-                                break;
-                            }
+        }
+        
+        else if (udpTitle == "ctr"){
+            vector<string> nameValue;
+            nameValue = ofSplitString(udpReceived[1], ": ");
+            disc.setCounter(ofToInt(nameValue[0]), ofToInt(nameValue[1]));
+        }
+        
+        else if (udpTitle == "lfe"){
+            Player *_player = NULL;
+            for(int j = 1; j < udpReceived.size(); j++ ){
+                vector<string> playerData = ofSplitString(udpReceived[j], ": ");
+                if (playerData[0] == "IP"){
+                    for (int k = 0; k < players.size(); k++) {
+                        if(playerData[1] == players[k]->getIP()) {
+                            _player = players[k];
+                            break;
                         }
                     }
-                    if (playerData[0] == "lifeChange" && _player != NULL) _player->changeLife(ofToFloat(playerData[1]));
                 }
+                if (playerData[0] == "lifeChange" && _player != NULL) _player->changeLife(ofToFloat(playerData[1]));
             }
-            
-            if (udpTitle == "opi"){
-                for(int i = 1; i < received.size(); i++ ){
-                    vector<string> playerData = ofSplitString(received[i], ": ");
-                    int thisPlayer;
-                    if (playerData[0] == "IP"){
-                        for (int j = 0; j < players.size(); j++) {
-                            if(playerData[1] == players[j]->getIP()) {
-                                thisPlayer = j;
-                                break;
-                            }
+        }
+        
+        else if (udpTitle == "opi"){
+            for(int i = 1; i < udpReceived.size(); i++ ){
+                vector<string> playerData = ofSplitString(udpReceived[i], ": ");
+                int thisPlayer;
+                if (playerData[0] == "IP"){
+                    for (int j = 0; j < players.size(); j++) {
+                        if(playerData[1] == players[j]->getIP()) {
+                            thisPlayer = j;
+                            break;
                         }
                     }
-                    if (playerData[0] == "index") players[thisPlayer]->setDiscIndex(ofToInt(playerData[1]));
+                }
+                if (playerData[0] == "index") players[thisPlayer]->setDiscIndex(ofToInt(playerData[1]));
+            }
+        }
+        
+        else if (udpTitle == "bye"){
+            for (int j = 0; j < players.size(); j++) {
+                if(received[1] == players[j]->getNick()) {
+                    players[j]->setConnection(false);
+                    players[j]->setDiscIndex(-1);
                 }
             }
-            
-            if (udpTitle == "bye"){
-                for (int j = 0; j < players.size(); j++) {
-                    if(received[1] == players[j]->getNick()) {
-                        players[j]->setConnection(false);
-                        players[j]->setDiscIndex(-1);
-                    }
-                }
-            }
-
+        }
+        
         
         //send UDP message to others
-        string thisIP = received[2];
+        string thisIP = udpReceived[2];
         for(int i = 0; i < players.size(); i++){
-            
             if(players[i]->getIP() != thisIP){
                 udpSend[i].Send(udpMessage, sizeof(udpMessage));
             }
-            
         }
         
         
@@ -456,6 +371,7 @@ void ofApp::update(){
                     }
                     _player->setConnection(true);
                     
+                    
                     // send player status
                     string playerInfo;
                     playerInfo += "playerInfo//";
@@ -465,8 +381,6 @@ void ofApp::update(){
                     playerInfo += "index: " + ofToString(_player->getDiscIndex()) + "//";
                     if(rejoin == true) playerInfo += "nick: " + _player->getNick() + "//";
                     server.send(i, playerInfo);
-                    
-                    
                     
                     
                     //if there are other players, also send their info
@@ -483,6 +397,25 @@ void ofApp::update(){
                             }
                         }
                     }
+                    
+                    //prepare to send the current state of the server
+                    string state;
+                    state += "state//";
+                    state += "discIndex: " + ofToString(disc.getDiscIndex()) + "//";
+                    for(int j = 0; j < disc.getDiscIndex(); j++){
+                        state += "radius"+ofToString(j) + ": " + ofToString(disc.getRadius(j)) + "//";
+                        state += "rotation"+ofToString(j) + ": " + ofToString(disc.getRotation(j)) + "//";
+                        state += "rotationSpeed"+ofToString(j) + ": " + ofToString(disc.getNetRotationSpeed(j)) + "//";
+                        state += "density"+ofToString(j) + ": " + ofToString(disc.getDensity(j)) + "//";
+                        state += "texture"+ofToString(j) + ": " + ofToString(disc.getTexture(j)) + "//";
+                        state += "zPosition"+ofToString(j) + ": " + ofToString(disc.getPosition(j)) + "//";
+                        state += "spike"+ofToString(j) + ": " + ofToString(disc.getSpikeDistance(j)) + "//";
+                        state += "seed"+ofToString(j) + ": " + ofToString(disc.getSeed(j)) + "//";
+                        state += "counter"+ofToString(j) + ": "+ ofToString(disc.getCounter(j)) + "//";
+                        state += "mute"+ofToString(j) + ": " + ofToString(disc.isMute(j)) + "//";
+                        state += "move"+ofToString(j) + ": " + ofToString(disc.isMoving(j)) + "//";
+                    }
+                    server.send(i, state);  //send current state to new client
                     
                     
                     //send player information to all other clients
@@ -510,33 +443,13 @@ void ofApp::update(){
                     costs += "reward: " + ofToString(reward) + "//";
                     server.send(i, costs);
                     
-                    //prepare to send the current state of the server
-                    string state;
-                    state += "state//";
-                    state += "discIndex: " + ofToString(disc.getDiscIndex()) + "//";
-                    for(int j = 0; j < disc.getDiscIndex(); j++){
-                        state += "radius"+ofToString(j) + ": " + ofToString(disc.getRadius(j)) + "//";
-                        state += "rotation"+ofToString(j) + ": " + ofToString(disc.getRotation(j)) + "//";
-                        state += "rotationSpeed"+ofToString(j) + ": " + ofToString(disc.getNetRotationSpeed(j)) + "//";
-                        state += "density"+ofToString(j) + ": " + ofToString(disc.getDensity(j)) + "//";
-                        state += "texture"+ofToString(j) + ": " + ofToString(disc.getTexture(j)) + "//";
-                        state += "zPosition"+ofToString(j) + ": " + ofToString(disc.getPosition(j)) + "//";
-                        state += "spike"+ofToString(j) + ": " + ofToString(disc.getSpikeDistance(j)) + "//";
-                        state += "seed"+ofToString(j) + ": " + ofToString(disc.getSeed(j)) + "//";
-                        state += "counter"+ofToString(j) + ": "+ ofToString(disc.getCounter(j)) + "//";
-                        state += "mute"+ofToString(j) + ": " + ofToString(disc.isMute(j)) + "//";
-                        state += "move"+ofToString(j) + ": " + ofToString(disc.isMoving(j)) + "//";
-                    }
-                    server.send(i, state);  //send current state to new client
-                    
-                    
                     cout<< "initialize " + ofToString(server.getClientIP(i)) <<endl;
                     
                 }
                 /////////////////////////////////////////////
                 
                 /////////////newDisc////////////////////////
-                if ( title == "newDisc" ){
+                else if ( title == "newDisc" ){
                     
                     Player* _player = new Player();
                     
@@ -581,309 +494,309 @@ void ofApp::update(){
                     
                 }
                 /////////////single changes//////////////////
-                // moved over to UDP //
+                // also UDP //
                 
-//                if (title == "rotationSpeed"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    
-//                    disc.setRotationSpeed(index, ofToFloat(nameValue[1]));
-//                    
-//                    cout << str << endl;
-//                }
-//                
-//                if (title == "radius"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    float newValue = ofToFloat(nameValue[1]);
-//                    float oldValue = disc.getThickness(index);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change;
-//                    if (newValue > oldValue) change = "increase";
-//                    else if (newValue < oldValue) change = "decrease";
-//                    
-//                    if(newValue != oldValue){
-//                        // set change
-//                        disc.setThickness(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                        
-//                    }
-//                }
-//                
-//                if (title == "density"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    int newValue = ofToFloat(nameValue[1]);
-//                    int oldValue = disc.getDensity(index);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change;
-//                    if (newValue > oldValue) change = "increase";
-//                    else if (newValue < oldValue) change = "decrease";
-//                    
-//                    if(newValue != oldValue){
-//                        // set change
-//                        disc.setDensity(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                    }
-//                }
-//                
-//                if (title == "texture"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    int newValue = ofToInt(nameValue[1]);
-//                    int oldValue = disc.getTexture(index);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change = ofToString(newValue);
-//                    
-//                    if(newValue != oldValue){
-//                        // set change
-//                        disc.setTexture(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                    }
-//                    
-//                    
-//                    
-//                }
-//                
-//                if (title == "spike"){
-//                    
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    int newValue = ofToFloat(nameValue[1]);
-//                    int oldValue = disc.getSpikeDistance(index);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change;
-//                    if (newValue > oldValue) change = "increase";
-//                    else if (newValue < oldValue) change = "decrease";
-//                    
-//                    if(newValue != oldValue){
-//                        
-//                        // set change
-//                        disc.setSpikeDistance(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                    }
-//                    
-//                    
-//                    
-//                }
-//                
-//                if (title == "mute"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    int newValue = ofToInt(nameValue[1]);
-//                    int oldValue = disc.isMute(index);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change;
-//                    if (newValue > oldValue) change = "increase";
-//                    else if (newValue < oldValue) change = "decrease";
-//                    
-//                    if(newValue != oldValue){
-//                        // set change
-//                        disc.setMute(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                    }
-//                }
-//                
-//                if (title == "move"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    int index = ofToInt(nameValue[0]);
-//                    int newValue = ofToInt(nameValue[1]);
-//                    int oldValue = disc.isMoving(index);
-//                    
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change;
-//                    if (newValue > oldValue) change = "increase";
-//                    else if (newValue < oldValue) change = "decrease";
-//                    
-//                    if(newValue != oldValue){
-//                        // set change
-//                        disc.setMoving(index, newValue);
-//                        
-//                        //add to eventList
-//                        eventAdd(time, IP, parameter, change);
-//                        
-//                        //check and remove similar
-//                        eventRemoveSame(time, IP, parameter, change);
-//                        
-//                        //reward if match with others
-//                        eventMatch(IP, parameter, change);
-//                    }
-//                    
-//                }
-//                
-//                if (title == "moveReset"){
-//                    int index = ofToInt(received[1]);
-//                    
-//                    // prepare event record
-//                    string time = ofToString(ofGetElapsedTimeMillis());
-//                    string IP = server.getClientIP(i);
-//                    string parameter = title;
-//                    string change = "reset";
-//                    
-//                    // set change
-//                    disc.resetPerlin[index] = 1;
-//                    
-//                    //add to eventList
-//                    eventAdd(time, IP, parameter, change);
-//                    
-//                    //check and remove similar
-//                    eventRemoveSame(time, IP, parameter, change);
-//                    
-//                    //reward if match with others
-//                    eventMatch(IP, parameter, change);
-//                }
-//                
-//                
-//                if (title == "moveAll"){
-//                    for(int i = 0; i<disc.getDiscIndex(); i++){
-//                        disc.setMoving(i, 1);
-//                    }
-//                }
-//                
-//                if (title == "stopAll"){
-//                    for(int i = 0; i<disc.getDiscIndex(); i++){
-//                        disc.setMoving(i, 0);
-//                    }
-//                }
-//                
-//                if (title == "resetAll"){
-//                    for(int i = 0; i<disc.getDiscIndex(); i++){
-//                        disc.resetPerlin[i] = 1;
-//                    }
-//                }
-//                
-//                if (title == "zPosition"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
-//                }
-//                
-//                if (title == "zPositionAll"){
-//                    for (int i = 1; i < received.size()-1; i++) {
-//                        vector<string> nameValue;
-//                        nameValue = ofSplitString(received[i], ": ");
-//                        disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
-//                    }
-//                }
-//                
-//                if (title == "counter"){
-//                    vector<string> nameValue;
-//                    nameValue = ofSplitString(received[1], ": ");
-//                    disc.setCounter(ofToInt(nameValue[0]), ofToInt(nameValue[1]));
-//                }
-//                
-//                if (title == "life"){
-//                    Player *_player = NULL;
-//                    for(int j = 1; j < received.size(); j++ ){
-//                        vector<string> playerData = ofSplitString(received[j], ": ");
-//                        if (playerData[0] == "IP"){
-//                            for (int k = 0; k < players.size(); k++) {
-//                                if(playerData[1] == players[k]->getIP()) {
-//                                    _player = players[k];
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        if (playerData[0] == "lifeChange" && _player != NULL) _player->changeLife(ofToFloat(playerData[1]));
-//                    }
-//                }
-//                
-//                if (title == "otherPlayersIndex"){
-//                    for(int i = 1; i < received.size(); i++ ){
-//                        vector<string> playerData = ofSplitString(received[i], ": ");
-//                        int thisPlayer;
-//                        if (playerData[0] == "IP"){
-//                            for (int j = 0; j < players.size(); j++) {
-//                                if(playerData[1] == players[j]->getIP()) {
-//                                    thisPlayer = j;
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                        if (playerData[0] == "index") players[thisPlayer]->setDiscIndex(ofToInt(playerData[1]));
-//                    }
-//                }
-//                
-//                if (title == "goodbye"){
-//                    cout<< str << endl;
-//                    for (int j = 0; j < players.size(); j++) {
-//                        if(server.getClientIP(i) == players[j]->getIP()) {
-//                            players[j]->setConnection(false);
-//                            players[j]->setDiscIndex(-1);
-//                        }
-//                    }
-//                }
+                else if (title == "rotationSpeed"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    
+                    disc.setRotationSpeed(index, ofToFloat(nameValue[1]));
+                    
+                    cout << str << endl;
+                }
+                
+                else if (title == "radius"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    float newValue = ofToFloat(nameValue[1]);
+                    float oldValue = disc.getThickness(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                        // set change
+                        disc.setThickness(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                        
+                    }
+                }
+                
+                else if (title == "density"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToFloat(nameValue[1]);
+                    int oldValue = disc.getDensity(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                        // set change
+                        disc.setDensity(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                }
+                
+                else if (title == "texture"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToInt(nameValue[1]);
+                    int oldValue = disc.getTexture(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change = ofToString(newValue);
+                    
+                    if(newValue != oldValue){
+                        // set change
+                        disc.setTexture(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                    
+                    
+                    
+                }
+                
+                else if (title == "spike"){
+                    
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToFloat(nameValue[1]);
+                    int oldValue = disc.getSpikeDistance(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                        
+                        // set change
+                        disc.setSpikeDistance(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                    
+                    
+                    
+                }
+                
+                else if (title == "mute"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToInt(nameValue[1]);
+                    int oldValue = disc.isMute(index);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                        // set change
+                        disc.setMute(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                }
+                
+                else if (title == "move"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    int index = ofToInt(nameValue[0]);
+                    int newValue = ofToInt(nameValue[1]);
+                    int oldValue = disc.isMoving(index);
+                    
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change;
+                    if (newValue > oldValue) change = "increase";
+                    else if (newValue < oldValue) change = "decrease";
+                    
+                    if(newValue != oldValue){
+                        // set change
+                        disc.setMoving(index, newValue);
+                        
+                        //add to eventList
+                        eventAdd(time, IP, parameter, change);
+                        
+                        //check and remove similar
+                        eventRemoveSame(time, IP, parameter, change);
+                        
+                        //reward if match with others
+                        eventMatch(IP, parameter, change);
+                    }
+                    
+                }
+                
+                else if (title == "moveReset"){
+                    int index = ofToInt(received[1]);
+                    
+                    // prepare event record
+                    string time = ofToString(ofGetElapsedTimeMillis());
+                    string IP = server.getClientIP(i);
+                    string parameter = title;
+                    string change = "reset";
+                    
+                    // set change
+                    disc.resetPerlin[index] = 1;
+                    
+                    //add to eventList
+                    eventAdd(time, IP, parameter, change);
+                    
+                    //check and remove similar
+                    eventRemoveSame(time, IP, parameter, change);
+                    
+                    //reward if match with others
+                    eventMatch(IP, parameter, change);
+                }
+                
+                
+                else if (title == "moveAll"){
+                    for(int i = 0; i<disc.getDiscIndex(); i++){
+                        disc.setMoving(i, 1);
+                    }
+                }
+                
+                else if (title == "stopAll"){
+                    for(int i = 0; i<disc.getDiscIndex(); i++){
+                        disc.setMoving(i, 0);
+                    }
+                }
+                
+                else if (title == "resetAll"){
+                    for(int i = 0; i<disc.getDiscIndex(); i++){
+                        disc.resetPerlin[i] = 1;
+                    }
+                }
+                
+                else if (title == "zPosition"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
+                }
+                
+                else if (title == "zPositionAll"){
+                    for (int i = 1; i < received.size()-1; i++) {
+                        vector<string> nameValue;
+                        nameValue = ofSplitString(received[i], ": ");
+                        disc.setPosition(ofToInt(nameValue[0]), ofToFloat(nameValue[1]));
+                    }
+                }
+                
+                else if (title == "counter"){
+                    vector<string> nameValue;
+                    nameValue = ofSplitString(received[1], ": ");
+                    disc.setCounter(ofToInt(nameValue[0]), ofToInt(nameValue[1]));
+                }
+                
+                else if (title == "life"){
+                    Player *_player = NULL;
+                    for(int j = 1; j < received.size(); j++ ){
+                        vector<string> playerData = ofSplitString(received[j], ": ");
+                        if (playerData[0] == "IP"){
+                            for (int k = 0; k < players.size(); k++) {
+                                if(playerData[1] == players[k]->getIP()) {
+                                    _player = players[k];
+                                    break;
+                                }
+                            }
+                        }
+                        if (playerData[0] == "lifeChange" && _player != NULL) _player->changeLife(ofToFloat(playerData[1]));
+                    }
+                }
+                
+                else if (title == "otherPlayersIndex"){
+                    for(int i = 1; i < received.size(); i++ ){
+                        vector<string> playerData = ofSplitString(received[i], ": ");
+                        int thisPlayer;
+                        if (playerData[0] == "IP"){
+                            for (int j = 0; j < players.size(); j++) {
+                                if(playerData[1] == players[j]->getIP()) {
+                                    thisPlayer = j;
+                                    break;
+                                }
+                            }
+                        }
+                        if (playerData[0] == "index") players[thisPlayer]->setDiscIndex(ofToInt(playerData[1]));
+                    }
+                }
+                
+                else if (title == "goodbye"){
+                    cout<< str << endl;
+                    for (int j = 0; j < players.size(); j++) {
+                        if(server.getClientIP(i) == players[j]->getIP()) {
+                            players[j]->setConnection(false);
+                            players[j]->setDiscIndex(-1);
+                        }
+                    }
+                }
                 /////////////////////////////////////////////
             }
             

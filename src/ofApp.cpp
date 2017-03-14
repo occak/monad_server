@@ -21,9 +21,9 @@ void ofApp::setup(){
     server.setMessageDelimiter("vnet");
     
     //    ofxUDPManager
-    udpReceive.Create();
-    udpReceive.Bind(10003);
-    udpReceive.SetNonBlocking(true);
+    udpManage.Create();
+    udpManage.Bind(10003);
+    udpManage.SetNonBlocking(true);
     
     
     // set up values of objects
@@ -73,10 +73,12 @@ void ofApp::update(){
     
     
     //UDP receive
-    char udpMessage[1000];
-    udpReceive.Receive(udpMessage,1000);
+    char udpMessage[100];
+    udpManage.Receive(udpMessage,100);
     string message = udpMessage;
     if(message.length()>0){
+        
+        cout<< message <<endl;
         
         udpReceived = ofSplitString(message, "//");
         //        udpTitle = udpReceived[0];
@@ -317,13 +319,14 @@ void ofApp::update(){
         
         
         //send UDP message to others
-        string thisIP = udpReceived[2];
-        for(int i = 0; i < players.size(); i++){
-            if(players[i]->getIP() != thisIP){
-                udpSend[i].Send(udpMessage, sizeof(udpMessage));
-            }
-        }
-        
+//        string thisIP = udpReceived[2];
+//        for(int i = 0; i < players.size(); i++){
+//            if(players[i]->getIP() != thisIP){
+//                udpManage.Send(udpMessage, sizeof(udpMessage));
+//            }
+//        }
+
+        udpManage.SendAll(udpMessage, sizeof(udpMessage));
         
     }
     
@@ -331,6 +334,7 @@ void ofApp::update(){
     for ( int i = 0; i < server.getLastID(); i++ ) {
         if(server.isClientConnected(i)) {
             string str = server.receive(i);
+            cout<< str <<endl;
             if(str.length()>0){
                 received = ofSplitString(str, "//");
                 title = received[0];
@@ -362,11 +366,11 @@ void ofApp::update(){
                         _player->setNick(received[1]);
                         
                         //create udp sender
-                        ofxUDPManager udpSender;
-                        udpSender.Create();
-                        udpSender.Connect(_player->getIP().c_str(), 10003);
-                        udpSender.SetNonBlocking(true);
-                        udpSend.push_back(udpSender);
+//                        ofxUDPManager udpSender;
+//                        udpSender.Create();
+//                        udpSender.Connect(_player->getIP().c_str(), 10003);
+//                        udpSender.SetNonBlocking(true);
+//                        udpSend.push_back(udpSender);
                         
                     }
                     _player->setConnection(true);
@@ -946,12 +950,12 @@ void ofApp::eventRemoveSame(string time, string IP, string parameter, string cha
 }
 
 //--------------------------------------------------------------
-void ofApp::newUDPsender(const char *IP){
-    
-    ofxUDPManager newUDP;
-    newUDP.Create();
-    newUDP.Connect(IP, 10003);
-    
-    
-    
-}
+//void ofApp::newUDPsender(const char *IP){
+//    
+//    ofxUDPManager newUDP;
+//    newUDP.Create();
+//    newUDP.Connect(IP, 10003);
+//    
+//    
+//    
+//}

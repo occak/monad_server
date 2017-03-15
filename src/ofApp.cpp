@@ -17,12 +17,12 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     //set up network
-    server.setup(10002);
+    server.setup(TCPport);
     server.setMessageDelimiter("vnet");
     
     //    ofxUDPManager
     udpManage.Create();
-    udpManage.Bind(10003);
+    udpManage.Bind(UDPport);
     udpManage.SetNonBlocking(true);
     
     
@@ -78,7 +78,7 @@ void ofApp::update(){
     string message = udpMessage;
     if(message.length()>0){
         
-        cout<< message <<endl;
+        cout<< message.length() <<endl;
         
         udpReceived = ofSplitString(message, "//");
         //        udpTitle = udpReceived[0];
@@ -101,7 +101,6 @@ void ofApp::update(){
          lfe
          opi - other players index
          
-         <<*set functions within event records, get them out!*>>
          
          */
         

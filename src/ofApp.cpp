@@ -78,7 +78,7 @@ void ofApp::update(){
     string message = udpMessage;
     if(message.length()>0){
         
-        cout<< message.length() <<endl;
+//        cout<< message.length() <<endl;
         
         udpReceived = ofSplitString(message, "//");
         //        udpTitle = udpReceived[0];

@@ -56,9 +56,10 @@ void Player::setColorByIndex(int index){
     // 50,153,187 - blue
     // 3271AD - koyu
     // 103,185,88 - green
+    // 2C4E00 koyu
     switch (index) {
         case 1:
-            color.setHex(0x2A5E91);
+            color.setHex(0x0A447B);
 //            color.set(161,24,87);
             break;
         case 2:

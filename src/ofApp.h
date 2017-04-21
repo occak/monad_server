@@ -42,7 +42,7 @@ class ofApp : public ofBaseApp{
     ofxTCPServer server;
     vector<string> received;
     string title;
-    int TCPport = 10002;
+    int TCPport = 10005;
     
     //UDP
     vector<ofxUDPManager> udpSend;
